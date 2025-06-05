@@ -1,0 +1,114 @@
+---
+title: "Effect Size and Cohen's d"
+author: "djani"
+date: today
+format:
+  html:
+    theme: cosmo               # Use a clean Bootstrap theme
+    toc: true                  # Table of contents on the side
+    toc-depth: 2               # Up to level 2 headers in TOC
+    number-sections: false      # Number section headings
+    code-fold: false           # Show all code by default
+    code-line-numbers: false   # Don't show line numbers
+    highlight-style: github    # Syntax highlighting style
+
+execute:
+  echo: true                   # Show code chunks
+  results: 'markup'            # Inline output next to code
+  collapse: true               # Collapse output into the same block as code
+  comment: "#>"                # Prefix for output lines (like in knitr)
+  warning: false               # Suppress warnings in output
+  message: false               # Suppress messages (e.g., from package loading)
+
+editor: visual                 # Use Quarto visual editor by default
+lang: en                       # Set the document language
+fontsize: 1em     
+---
+
+```{r, echo=FALSE}
+knitr::opts_chunk$set(
+  comment = "#>",
+  collapse = TRUE,
+  # cache = TRUE,
+  fig.retina = 2,
+  fig.width = 6,
+  fig.asp = 2 / 3,
+  fig.show = "hold"
+)
+```
+
+## Example experiment
+
+Lets imagine we want to study the effect of a new anti ADHD medication on patients ability to focus. In a placebo study we measure the focus duration of indivduals.
+
+```{r}
+library(tidyverse)
+
+# focus time in min 
+placebo   <- c(15, 16, 13, 15, 14, 16, 16, 17 , 13, 15, 14)
+treatment <- c(19, 19, 16, 18, 18, 17, 19, 18 , 18, 16, 16)
+
+sd_placebo   <- sd(placebo)
+sd_treatment <- sd(treatment)
+
+mean_placebo    <- mean(placebo)
+mean_treatment <- mean(treatment)
+
+pooled_sd <- (sd_placebo + sd_treatment)/2
+```
+
+We have a fictitious experiment where it seems that the drug leads to increase of focus time.
+
+```{r}
+# for visualisation only
+df <- 
+  data.frame(
+    mean = c(mean_placebo, mean_treatment),
+    sd   = c(sd_placebo, sd_treatment)
+  ) 
+
+rownames(df) <- c("placebo", "treatment")
+
+df
+```
+
+## Statistical significance
+
+Lets see if the difference between the treatment and the placebo is statistically significant assuming p \< 0.05.
+
+```{r}
+t.test(placebo, treatment)
+```
+
+Yes the `diff(c(mean_placebo, mean_treatment))` is around `r round(diff(c(mean_placebo, mean_treatment)))` minutes and is statistically significant because there is a miniscule (only `r round(100*t.test(placebo, treatment)$p.value, 4)` %) chance that those two sets (`placebo` and `treatment`) stem from the same underlying population.
+
+But what about the effect?
+
+## Effect size using Cohen's d
+
+### Theory
+
+The effect size shows **how much** the treatment affects the people. How big is the change. The formulation of effect size is
+
+$$
+d = \frac{M_{\text{med}} - M_{\text{placebo}}}{s_{\text{pooled}}}
+$$
+
+If the difference in the nominator would be equal the standard deviation ($M_{med} - M_{placebo} = s_{pooled}$ ) then $d = \frac{s_{pooled}}{s_{pooled}} = 1$ and we woud say that on average the treatment leads **to one standard deviation increase** in effect. In literature 0.2 is weak effect, 0.6 is a moderate effect, and everything above 0.8 standard deviations is a very strong effect.
+
+Lets calculate $d$ for our fictitious example.
+
+```{r}
+d <- (mean_treatment - mean_placebo)/pooled_sd
+d
+
+# using function in
+library(lsr)
+cohensD(treatment, placebo)
+```
+
+### Interpretation
+
+The effect of this drug is `r round(cohensD(treatment, placebo),2)` times the pooled standard deviation of the study group - a very strong effect on focus time. On average, the drug leads to an increase in focus time by about (`d x pooled_sd`) `r round(cohensD(treatment, placebo) * pooled_sd)` minutes.
+
+So while statistical significance tells us that we can be sure that the numbers are trully different and not just a random realization of the same underlying process (or population), the effect size informs us about the **magnitude** of the difference.
