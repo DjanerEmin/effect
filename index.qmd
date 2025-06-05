@@ -39,7 +39,7 @@ knitr::opts_chunk$set(
 
 ## Example experiment
 
-Lets imagine we want to study the effect of a new anti ADHD medication on patients ability to focus. In a placebo study we measure the focus duration of indivduals.
+Imagine we are studying the effect of a new anti-ADHD medication on patient's ability to focus. We design a controlled experiment and measure the focus time of individuals with and without the drug.
 
 ```{r}
 library(tidyverse)
@@ -48,16 +48,18 @@ library(tidyverse)
 placebo   <- c(15, 16, 13, 15, 14, 16, 16, 17 , 13, 15, 14)
 treatment <- c(19, 19, 16, 18, 18, 17, 19, 18 , 18, 16, 16)
 
+# mean time 
+mean_placebo    <- mean(placebo)
+mean_treatment  <- mean(treatment)
+
+# standard deviations
 sd_placebo   <- sd(placebo)
 sd_treatment <- sd(treatment)
-
-mean_placebo    <- mean(placebo)
-mean_treatment <- mean(treatment)
 
 pooled_sd <- (sd_placebo + sd_treatment)/2
 ```
 
-We have a fictitious experiment where it seems that the drug leads to increase of focus time.
+Now we have a fictitious experiment where it seems that the drug leads to increase of focus time.
 
 ```{r}
 # for visualisation only
@@ -69,18 +71,19 @@ df <-
 
 rownames(df) <- c("placebo", "treatment")
 
+# focus time
 df
 ```
 
 ## Statistical significance
 
-Lets see if the difference between the treatment and the placebo is statistically significant assuming p \< 0.05.
+Lets see if the increase between placebo and the treatment is statistically significant assuming p \< 0.05.
 
 ```{r}
-t.test(placebo, treatment)
+t.test(treatment, placebo, "greater")
 ```
 
-Yes the `diff(c(mean_placebo, mean_treatment))` is around `r round(diff(c(mean_placebo, mean_treatment)))` minutes and is statistically significant because there is a miniscule (only `r round(100*t.test(placebo, treatment)$p.value, 4)` %) chance that those two sets (`placebo` and `treatment`) stem from the same underlying population.
+Yes the `diff(c(mean_placebo, mean_treatment))` is around `r round(diff(c(mean_placebo, mean_treatment)))` minutes and is statistically significant because there is a miniscule (only `r round(100*t.test(placebo, treatment)$p.value, 4)` %) chance that those two sets (`placebo` and `treatment`) stem from the same underlying population (and this in reality have the same mean).
 
 But what about the effect?
 
