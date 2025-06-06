@@ -83,7 +83,7 @@ Lets see if the increase between placebo and the treatment is statistically sign
 t.test(treatment, placebo, "greater")
 ```
 
-Yes the `diff(c(mean_placebo, mean_treatment))` is around `r round(diff(c(mean_placebo, mean_treatment)))` minutes and is statistically significant because there is a miniscule (only `r round(100*t.test(placebo, treatment)$p.value, 4)` %) chance that those two sets (`placebo` and `treatment`) stem from the same underlying population (and this in reality have the same mean).
+Yes the `diff(c(mean_placebo, mean_treatment))` is around `r round(diff(c(mean_placebo, mean_treatment)))` minutes and is statistically significant because there is a miniscule (only `r round(100*t.test(placebo, treatment, "greater")$p.value, 4)` %) chance that those two sets (`placebo` and `treatment`) stem from the same underlying population (and this in reality have the same mean).
 
 But what about the effect?
 
@@ -112,6 +112,6 @@ cohensD(treatment, placebo)
 
 ### Interpretation
 
-The effect of this drug is `r round(cohensD(treatment, placebo),2)` times the pooled standard deviation of the study group - a very strong effect on focus time. On average, the drug leads to an increase in focus time by about (`d x pooled_sd`) `r round(cohensD(treatment, placebo) * pooled_sd)` minutes.
+The effect of this drug is `r round(cohensD(treatment, placebo), 3)` times the pooled standard deviation of the study group - a very strong effect on focus time. On average, the drug leads to an increase in focus time by about (`d x pooled_sd`) `r round(cohensD(treatment, placebo) * pooled_sd, 3)` minutes.
 
 So while statistical significance tells us that we can be sure that the numbers are trully different and not just a random realization of the same underlying process (or population), the effect size informs us about the **magnitude** of the difference.
