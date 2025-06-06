@@ -83,7 +83,7 @@ Lets see if the increase between placebo and the treatment is statistically sign
 t.test(treatment, placebo, "greater")
 ```
 
-Yes the `diff(c(mean_placebo, mean_treatment))` is around `r round(diff(c(mean_placebo, mean_treatment)))` minutes and is statistically significant because there is a miniscule (only `r round(100*t.test(placebo, treatment, "greater")$p.value, 4)` %) chance that those two sets (`placebo` and `treatment`) stem from the same underlying population. In other words there is only a very small chance that the `treatment` and `placebo` have the same mean value.
+Yes the `diff(c(mean_placebo, mean_treatment))` is around `r round(diff(c(mean_placebo, mean_treatment)))` minutes and is statistically significant because there is a miniscule (only p = `r round(100*t.test(treatment, placebo, "greater")$p.value, 4)` %) chance that those two sets (`placebo` and `treatment`) stem from the same underlying population. In other words there is only a very small chance that the `treatment` and `placebo` have the same mean value.
 
 But what about the effect?
 
